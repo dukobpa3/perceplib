@@ -1,8 +1,8 @@
 package api
 
 import (
-	"perceptrail/chain"
-	l "perceptrail/logger"
+	"github.com/dukobpa3/perceplib/chain"
+	l "github.com/dukobpa3/perceplib/logger"
 )
 
 // DataProviderType defines the source of data for the perceptor
