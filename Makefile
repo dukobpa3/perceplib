@@ -1,9 +1,9 @@
 .PHONY: commit push tag release
 
 # Get the current version from git tags
-VERSION := $(shell git tag -l 2>/dev/null || echo "v0.0.0")
+VERSION := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
 # Increment patch version
-NEXT_VERSION := $(shell echo $(VERSION) | awk -F. '{$$NF = $$NF + 1;} 1' | sed 's/ /./g')
+NEXT_VERSION := $(shell echo $(VERSION) | awk -F. '{ printf "v%d.%d.%d", $$1, $$2, substr($$3,1) + 1 }' | sed 's/v\([0-9]\)/\1/')
 
 # Commit changes with a message
 commit:
