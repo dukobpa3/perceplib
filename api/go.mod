@@ -3,7 +3,8 @@ module perceptrail/api
 go 1.23.2
 
 require (
-	github.com/dukobpa3/perceplib v0.0.0
+	github.com/dukobpa3/perceplib/chain v0.0.0
+	github.com/dukobpa3/perceplib/logger v0.0.0
 )
 
 require (
