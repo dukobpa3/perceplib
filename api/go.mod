@@ -1,4 +1,4 @@
-module perceptrail/api
+module github.com/dukobpa3/perceplib/api
 
 go 1.23.2
 

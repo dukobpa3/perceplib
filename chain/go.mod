@@ -1,4 +1,4 @@
-module perceptrail/chain
+module github.com/dukobpa3/perceplib/chain
 
 go 1.23.2
 

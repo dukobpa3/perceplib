@@ -1,4 +1,4 @@
-module perceptrail/logger
+module github.com/dukobpa3/perceplib/logger
 
 go 1.23.2
 

@@ -1,4 +1,4 @@
-module perceptrail/exiftool
+module github.com/dukobpa3/perceplib/exiftool
 
 go 1.23.2
 
