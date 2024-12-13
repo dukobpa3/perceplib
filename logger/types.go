@@ -24,8 +24,11 @@ type Logger struct {
 type LogLevel int8
 
 type Field struct {
-	Key   string
-	Value interface{}
+	Key       string
+	Type      uint8
+	Integer   int64
+	String    string
+	Interface interface{}
 }
 
 type Option struct {

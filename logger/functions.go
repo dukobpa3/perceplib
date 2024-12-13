@@ -1,9 +1,7 @@
 package logger
 
 import (
-	"fmt"
 	"math/rand"
-	"os"
 	"sync"
 	"time"
 
@@ -25,28 +23,28 @@ var (
 )
 
 // Helper functions for creating Fields
-func String(key, val string) Field {
-	return Field{Key: key, Value: val}
+func String(key, val string) zap.Field {
+	return zap.String(key, val)
 }
 
-func Any(key string, value interface{}) Field {
-	return Field{Key: key, Value: value}
+func Any(key string, value interface{}) zap.Field {
+	return zap.Any(key, value)
 }
 
-func Error(err error) Field {
-	return Field{Key: "error", Value: err}
+func Error(err error) zap.Field {
+	return zap.Error(err)
 }
 
-func NewDevelopment() (*Logger, error) {
-	zapLogger, err := zap.NewDevelopment()
-	if err != nil {
-		return nil, err
-	}
-	return &Logger{
-		zapLogger: zapLogger,
-		services:  make(map[string]ServiceConfig),
-		mu:        &sync.RWMutex{},
-	}, nil
+func Duration(key string, value time.Duration) zap.Field {
+	return zap.Duration(key, value)
+}
+
+func Int(key string, value int) zap.Field {
+	return zap.Int(key, value)
+}
+
+func Int64(key string, value int64) zap.Field {
+	return zap.Int64(key, value)
 }
 
 func Level(level LogLevel) LogLevel {
@@ -68,21 +66,4 @@ func getColorForService(service string) string {
 	color := colors[r.Intn(len(colors))]
 	serviceColors[service] = color
 	return color
-}
-
-// Logger creation
-func newColoredLogger(service string, color string) *zap.Logger {
-	encoderConfig := zap.NewProductionEncoderConfig()
-	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-
-	core := zapcore.NewCore(
-		zapcore.NewConsoleEncoder(encoderConfig),
-		zapcore.AddSync(os.Stdout),
-		zapcore.DebugLevel,
-	)
-
-	logger := zap.New(core).With(zap.String("service", fmt.Sprintf("%s%s%s", color, service, ColorReset)))
-
-	return logger
 }
