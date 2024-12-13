@@ -20,10 +20,11 @@ var (
 		ColorBrightBlue, ColorBrightMagenta, ColorBrightCyan,
 		ColorBrightWhite,
 	}
-	mu sync.Mutex
-	r  = rand.New(rand.NewSource(time.Now().UnixNano()))
+	globalMu sync.RWMutex
+	r        = rand.New(rand.NewSource(time.Now().UnixNano()))
 )
 
+// Helper functions for creating Fields
 func String(key, val string) Field {
 	return Field{Key: key, Value: val}
 }
@@ -41,7 +42,11 @@ func NewDevelopment() (*Logger, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Logger{zapLogger: zapLogger}, nil
+	return &Logger{
+		zapLogger: zapLogger,
+		services:  make(map[string]ServiceConfig),
+		mu:        &sync.RWMutex{},
+	}, nil
 }
 
 func Level(level LogLevel) LogLevel {
@@ -53,8 +58,8 @@ func IncreaseLevel(level LogLevel) Option {
 }
 
 func getColorForService(service string) string {
-	mu.Lock()
-	defer mu.Unlock()
+	globalMu.Lock()
+	defer globalMu.Unlock()
 
 	if color, exists := serviceColors[service]; exists {
 		return color
@@ -65,17 +70,11 @@ func getColorForService(service string) string {
 	return color
 }
 
-func coloredEncoderConfig() zapcore.EncoderConfig {
-	config := zap.NewProductionEncoderConfig()
-	config.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	config.EncodeTime = zapcore.ISO8601TimeEncoder
-	return config
-}
-
-func newColoredLogger(service string) *zap.Logger {
-	color := getColorForService(service)
-
-	encoderConfig := coloredEncoderConfig()
+// Logger creation
+func newColoredLogger(service string, color string) *zap.Logger {
+	encoderConfig := zap.NewProductionEncoderConfig()
+	encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoderConfig),

@@ -1,12 +1,24 @@
 package logger
 
 import (
+	"sync"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
+// ServiceConfig holds configuration for a service logger
+type ServiceConfig struct {
+	Name    string
+	Color   string
+	Enabled bool
+}
+
+// Logger wraps zap logger with additional service management
 type Logger struct {
 	zapLogger *zap.Logger
+	services  map[string]ServiceConfig
+	mu        *sync.RWMutex
 }
 
 type LogLevel int8
